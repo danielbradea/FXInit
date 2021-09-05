@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -59,10 +60,10 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        List<String> items = Arrays.asList("11", "12", "13", "14", "15", "16");
+        List<String> items = Arrays.asList("11", "11.0.2", "12", "12.0.2", "13", "13.0.2", "14", "14.0.2.1", "15", "15.0.1", "16");
         ObservableList<String> itemsList = FXCollections.observableList(items);
         fxVersion.setItems(itemsList);
-        fxVersion.getSelectionModel().select(5);
+        fxVersion.getSelectionModel().select(0);
 
         buttonGenerate.setDisable(true);
 

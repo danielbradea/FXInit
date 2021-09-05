@@ -1,0 +1,7 @@
+package -GROUP-ID-;
+
+public class FXInit {
+    public static void main(String[] args) {
+        MainStage.main(args);
+    }
+}

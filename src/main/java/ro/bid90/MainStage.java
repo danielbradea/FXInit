@@ -4,10 +4,11 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 
-public class App extends Application {
+public class MainStage extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -15,6 +16,7 @@ public class App extends Application {
         stage.setScene(new Scene(root));
         stage.setTitle("FXInit");
         stage.setResizable(false);
+        stage.getIcons().add(new Image(getClass().getResource("Fx.png").openStream()));
         stage.show();
     }
 

@@ -1,9 +1,9 @@
-module ro.bid90 {
+module fxinit {
     requires javafx.controls;
     requires javafx.fxml;
 
-    exports ro.bid90;
-
     opens ro.bid90.controller to javafx.fxml;
+
+    exports ro.bid90;
     exports ro.bid90.controller;
 }

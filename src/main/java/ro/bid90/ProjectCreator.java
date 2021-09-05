@@ -38,11 +38,12 @@ public class ProjectCreator implements Runnable {
         Path packagePath;
         Path javaPath;
         Path controllerPath;
-        List<String> appTemplate = null;
-        List<String> mainTemplate = null;
+        List<String> mainStageTemplate = null;
+        List<String> mainFxTemplate = null;
         List<String> mainControllerTemplate = null;
         List<String> moduleTemplate = null;
         List<String> pomTemplate = null;
+        List<String> initAppTemplate = null;
 
 
         resourcesPath = rootFolder.resolve("src").resolve("main").resolve("resources");
@@ -50,23 +51,25 @@ public class ProjectCreator implements Runnable {
         packagePath = javaPath;
         String[] packages = groupId.split("\\.");
         System.out.println(packages.length);
-        for (String s : packages){
+        for (String s : packages) {
             packagePath = packagePath.resolve(s);
         }
 
         controllerPath = packagePath.resolve("controller");
         ReaderTemplate template = new ReaderTemplate(appName, groupId, artefactId, version, versionFX);
         try {
-            appTemplate = template.readLine(new File(getClass().getResource("template/App.txt").toURI()).toPath());
-            mainTemplate = template.readLine(new File(getClass().getResource("template/main.txt").toURI()).toPath());
+            mainStageTemplate = template.readLine(new File(getClass().getResource("template/MainStage.txt").toURI()).toPath());
+            mainFxTemplate = template.readLine(new File(getClass().getResource("template/main.txt").toURI()).toPath());
             mainControllerTemplate = template.readLine(new File(getClass().getResource("template/MainController.txt").toURI()).toPath());
             moduleTemplate = template.readLine(new File(getClass().getResource("template/module-info.txt").toURI()).toPath());
-            pomTemplate = template.readLine(new File(getClass().getResource("template/pom.txt").toURI()).toPath());
-            linesSize += appTemplate.size();
-            linesSize += mainTemplate.size();
+            pomTemplate = template.readLine(new File(getClass().getResource("template/pom.xml").toURI()).toPath());
+            initAppTemplate = template.readLine(new File(getClass().getResource("template/FXinit.txt").toURI()).toPath());
+            linesSize += mainStageTemplate.size();
+            linesSize += mainFxTemplate.size();
             linesSize += mainControllerTemplate.size();
             linesSize += moduleTemplate.size();
             linesSize += pomTemplate.size();
+            linesSize += initAppTemplate.size();
 
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
@@ -79,18 +82,20 @@ public class ProjectCreator implements Runnable {
             Files.createFile(rootFolder.resolve("pom.xml"));
             Files.createFile(resourcesPath.resolve("main.fxml"));
             Files.createFile(javaPath.resolve("module-info.java"));
-            Files.createFile(packagePath.resolve("App.java"));
+            Files.createFile(packagePath.resolve("MainStage.java"));
+            Files.createFile(packagePath.resolve(appName + ".java"));
             Files.createFile(controllerPath.resolve("MainController.java"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        writeFile(rootFolder.resolve("pom.xml"),pomTemplate);
-        writeFile(resourcesPath.resolve("main.fxml"),mainTemplate);
-        writeFile(javaPath.resolve("module-info.java"),moduleTemplate);
-        writeFile(packagePath.resolve("App.java"),appTemplate);
-        writeFile(controllerPath.resolve("MainController.java"),mainControllerTemplate);
-        
+        writeFile(rootFolder.resolve("pom.xml"), pomTemplate);
+        writeFile(resourcesPath.resolve("main.fxml"), mainFxTemplate);
+        writeFile(javaPath.resolve("module-info.java"), moduleTemplate);
+        writeFile(packagePath.resolve("MainStage.java"), mainStageTemplate);
+        writeFile(packagePath.resolve(appName + ".java"), initAppTemplate);
+        writeFile(controllerPath.resolve("MainController.java"), mainControllerTemplate);
+
     }
 
     public interface ProjectCreatorProgress {
@@ -101,12 +106,13 @@ public class ProjectCreator implements Runnable {
     private double normalize(double value) {
         return (value - 0) / (this.linesSize - 0);
     }
-    private void createDirectory(Path path){
+
+    private void createDirectory(Path path) {
         File dir = new File(path.toString());
         dir.mkdirs();
     }
 
-    private  void writeFile(Path path, List<String> templateLines){
+    private void writeFile(Path path, List<String> templateLines) {
         try {
             FileWriter fileWriter = new FileWriter(path.toString());
             templateLines.stream().forEach(s -> {

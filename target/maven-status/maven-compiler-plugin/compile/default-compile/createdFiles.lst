@@ -1,0 +1,7 @@
+ro\bid90\App.class
+ro\bid90\SystemInfo.class
+module-info.class
+ro\bid90\controller\Controller.class
+ro\bid90\ProjectCreator.class
+ro\bid90\ProjectCreator$ProjectCreatorProgress.class
+ro\bid90\ReaderTemplate.class

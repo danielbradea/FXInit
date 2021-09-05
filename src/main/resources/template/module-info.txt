@@ -1,0 +1,9 @@
+module -GROUP-ID- {
+    requires javafx.controls;
+    requires javafx.fxml;
+
+    exports -GROUP-ID-;
+    exports -GROUP-ID-.controller to javafx.fxml;
+
+    opens -GROUP-ID-.controller to javafx.fxml;
+}

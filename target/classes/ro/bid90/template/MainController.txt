@@ -1,0 +1,25 @@
+package -GROUP-ID-.controller;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+
+public class MainController implements Initializable {
+
+    @FXML
+    Label textLabel;
+
+    @FXML
+    Button clickButton;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        textLabel.setText("Hello world!");
+        clickButton.setOnMouseClicked(actionEvent -> {
+            textLabel.setText("Boom!");
+        });
+    }
+
+}

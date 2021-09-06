@@ -1,6 +1,6 @@
 package -GROUP-ID-;
 
-public class FXInit {
+public class -APP- {
     public static void main(String[] args) {
         MainStage.main(args);
     }

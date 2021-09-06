@@ -13,41 +13,32 @@ public class ReaderTemplate {
     String artefactId;
     String version;
     String versionFX;
+    String description;
 
-    public ReaderTemplate(String appName, String groupId, String artefactId, String version, String versionFX) {
+    public ReaderTemplate(String appName,
+                          String groupId,
+                          String artefactId,
+                          String description,
+                          String version,
+                          String versionFX) {
         this.appName = appName;
         this.groupId = groupId;
         this.artefactId = artefactId;
         this.version = version;
         this.versionFX = versionFX;
+        this.description = description;
     }
 
     public List<String> readLine(Path path) throws IOException {
         Stream<String> stringList = Files.lines(path);
         return stringList.map(s -> {
-
-            if (s.contains("-GROUP-ID-")) {
-                String line = s.replace("-GROUP-ID-", groupId);
-                return  line+"\n";
-            }
-            if (s.contains("-APP-")) {
-                String line  = s.replace("-APP-", appName);
-                return  line+"\n";
-            }
-            if (s.contains("-FX-VERSION")) {
-                String line  = s.replace("-FX-VERSION", versionFX);
-                return  line+"\n";
-            }
-            if (s.contains("-VERSION-")) {
-                String line  = s.replace("-VERSION-", version);
-                return  line+"\n";
-            }
-            if(s.contains("-GROUP-TARGET-")){
-                String line  = s.replace("-GROUP-TARGET-", groupId.replace(".","/"));
-                return  line+"\n";
-            }
-
-            return s+"\n";
+            String line = s.replace("-GROUP-ID-", groupId)
+                    .replace("-GROUP-TARGET-", groupId.replace(".","/"))
+                    .replace("-VERSION-", version)
+                    .replace("-APP-", appName)
+                    .replace("-FX-VERSION", versionFX)
+                    .replace("-DESCRIPTION-", description);
+            return line+"\n";
         }).collect(Collectors.toList());
 
     }

@@ -1,4 +1,4 @@
-module -GROUP-ID- {
+module -APP- {
     requires javafx.controls;
     requires javafx.fxml;
 

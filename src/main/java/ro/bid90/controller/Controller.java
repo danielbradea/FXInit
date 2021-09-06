@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import ro.bid90.ProjectCreator;
 
 public class Controller implements Initializable {
@@ -43,19 +45,44 @@ public class Controller implements Initializable {
     ProgressBar progressBar;
 
     @FXML
+    TextArea description;
+
+    @FXML
     public void clickGenerate(ActionEvent actionEvent) {
-        String appName = this.appName.getText();
+        String appName = StringUtils.capitalize(this.appName.getText());
         String appGroupId = this.appGroupId.getText();
         String appArtefactId = this.appArtefactId.getText();
         String appVersion = this.appVersion.getText();
+        if (appVersion.isEmpty() || appVersion.isBlank()) {
+            appVersion = "1.0.0";
+        }
         String fxVersion = this.fxVersion.getValue();
+        String appDescription = this.description.getText();
         String path = selectPath(actionEvent);
-        if (path != null) {
-            new Thread(new ProjectCreator(appName, appGroupId, appArtefactId, appVersion, fxVersion, Paths.get(path), o -> {
-                progressBar.setProgress(o);
-            })).start();
+        if (appDescription.isEmpty() || appDescription.isBlank()) {
+            appDescription = appName + " project with JavaFx";
         }
 
+        if (path != null) {
+            Alert alert = new Alert(Alert.AlertType.NONE);
+            new Thread(new ProjectCreator(appName,
+                    appGroupId,
+                    appArtefactId,
+                    appVersion,
+                    appDescription,
+                    fxVersion,
+                    Paths.get(path), o -> {
+                progressBar.setProgress(o);
+            }, (type, message) -> {
+                Platform.runLater(() -> {
+                    alert.setAlertType(type);
+                    alert.setContentText(message);
+                    alert.show();
+                });
+
+            })).start();
+        }
+        clearProgress();
     }
 
     @Override
@@ -69,16 +96,24 @@ public class Controller implements Initializable {
 
         appName.textProperty().addListener((observableValue, s, t1) -> {
             appArtefactId.setText(t1.toLowerCase());
+            description.setPromptText(StringUtils.capitalize(t1) + " project with JavaFx");
             validateInput();
+            clearProgress();
         });
 
         appVersion.textProperty().addListener((observableValue, s, t1) -> {
             validateInput();
+            clearProgress();
         });
 
         appArtefactId.textProperty().addListener((observableValue, s, t1) -> {
             validateInput();
+            clearProgress();
         });
+        fxVersion.valueProperty().addListener(observable -> {
+            clearProgress();
+        });
+
     }
 
     String selectPath(ActionEvent actionEvent) {
@@ -95,12 +130,16 @@ public class Controller implements Initializable {
     }
 
     void validateInput() {
-        if (appArtefactId.getText().isEmpty() || appName.getText().isEmpty() || appVersion.getText().isEmpty() || appGroupId.getText().isEmpty()) {
+        if (appArtefactId.getText().isEmpty() || appName.getText().isEmpty() || appGroupId.getText().isEmpty()) {
             buttonGenerate.setDisable(true);
-        } else if (appArtefactId.getText().isBlank() || appName.getText().isBlank() || appVersion.getText().isBlank() || appGroupId.getText().isBlank()) {
+        } else if (appArtefactId.getText().isBlank() || appName.getText().isBlank() || appGroupId.getText().isBlank()) {
             buttonGenerate.setDisable(true);
         } else
             buttonGenerate.setDisable(false);
+    }
+
+    void clearProgress() {
+        progressBar.setProgress(0);
     }
 
 
